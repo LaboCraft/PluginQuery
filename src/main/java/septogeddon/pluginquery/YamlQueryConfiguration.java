@@ -79,7 +79,7 @@ public class YamlQueryConfiguration implements QueryConfiguration {
         if (!file.exists()) saveDefaultConfig(file);
         Yaml yaml = new Yaml();
         try (FileReader reader = new FileReader(file)) {
-            map.putAll(yaml.loadAs(reader, map.getClass()));
+            map.putAll((Map<String, Object>)yaml.loadAs(reader, map.getClass()));
         }
     }
 

@@ -24,11 +24,14 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.Key;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 public class SpigotPluginQuery extends JavaPlugin implements QueryMessageListener, PluginMessageListener {
 
@@ -69,10 +72,17 @@ public class SpigotPluginQuery extends JavaPlugin implements QueryMessageListene
 
     protected void register(boolean tryAgain) {
         try {
+            //net.minecraft.server.dedicated.DedicatedServer
             // TODO Check latebind
             Object craftserver = Bukkit.getServer();
             Object server = craftserver.getClass().getMethod("getServer").invoke(craftserver);
-            Object serverConnection = server.getClass().getMethod("getServerConnection").invoke(server);
+            List<String> methodeName = Arrays.stream(craftserver.getClass().getMethods()).map(Method::getName).collect(Collectors.toList());
+            Object serverConnection;
+            if (methodeName.contains("getServerConnection")) {
+                serverConnection = server.getClass().getMethod("getServerConnection").invoke(server);
+            } else {
+                serverConnection = server.getClass().getMethod("ad").invoke(server);
+            }
             Field[] decl = serverConnection.getClass().getDeclaredFields();
             for (Field f : decl) {
                 if (f.getType().equals(List.class)) {
