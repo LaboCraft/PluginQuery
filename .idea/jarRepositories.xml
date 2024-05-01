@@ -32,6 +32,11 @@
       <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="nms-repo" />
+      <option name="name" value="nms-repo" />
+      <option name="url" value="https://repo.codemc.io/repository/nms/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="velocity" />
       <option name="name" value="velocity" />
       <option name="url" value="https://nexus.velocitypowered.com/repository/maven-public/" />

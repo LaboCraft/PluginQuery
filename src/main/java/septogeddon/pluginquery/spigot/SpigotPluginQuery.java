@@ -2,8 +2,12 @@ package septogeddon.pluginquery.spigot;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.network.ServerConnectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.craftbukkit.v1_20_R3.CraftServer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -65,7 +69,6 @@ public class SpigotPluginQuery extends JavaPlugin implements QueryMessageListene
             conn.disconnect().joinThread();
         }
     }
-
     public Set<Channel> getListeners() {
         return listeners;
     }
@@ -78,10 +81,16 @@ public class SpigotPluginQuery extends JavaPlugin implements QueryMessageListene
             Object server = craftserver.getClass().getMethod("getServer").invoke(craftserver);
             List<String> methodeName = Arrays.stream(craftserver.getClass().getMethods()).map(Method::getName).collect(Collectors.toList());
             Object serverConnection;
-            if (methodeName.contains("getServerConnection")) {
+            if (methodeName.contains("getConnection")) {
+                serverConnection = server.getClass().getMethod("getConnection").invoke(server);
+            } else if (methodeName.contains("getServerConnection")) {
                 serverConnection = server.getClass().getMethod("getServerConnection").invoke(server);
             } else {
-                serverConnection = server.getClass().getMethod("ad").invoke(server);
+                try {
+                    serverConnection = ((CraftServer) Bukkit.getServer()).getServer().getConnection();
+                } catch (Exception ignored) {
+                    serverConnection = server.getClass().getMethod("ad").invoke(server);
+                }
             }
             Field[] decl = serverConnection.getClass().getDeclaredFields();
             for (Field f : decl) {
