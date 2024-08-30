@@ -87,7 +87,8 @@ public class SpigotPluginQuery extends JavaPlugin implements QueryMessageListene
                 serverConnection = server.getClass().getMethod("getServerConnection").invoke(server);
             } else {
                 try {
-                    serverConnection = ((CraftServer) Bukkit.getServer()).getServer().getConnection();
+                    //serverConnection = ((CraftServer) Bukkit.getServer()).getServer().getConnection();
+                    serverConnection = server.getClass().getMethod("getConnection").invoke(server);
                 } catch (Exception ignored) {
                     serverConnection = server.getClass().getMethod("ad").invoke(server);
                 }
